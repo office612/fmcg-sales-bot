@@ -1,7 +1,7 @@
 import os
 import logging
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
+from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters, CallbackQueryHandler
 
 BOT_TOKEN = os.getenv("SALES_BOT_TOKEN", "")
 
@@ -11,30 +11,27 @@ logger = logging.getLogger(__name__)
 ROLES = {
     "\U0001f9d1 Торговый представитель": (
         "Добро пожаловать, коллега! \U0001f9d1\n\n"
-        "Для торговых представителей я подготовил самое практичное из курса <b>«Рекорды продаж»</b>:\n\n"
+        "Для торговых представителей я подготовил самое практичное из курса <b>\u00abРекорды продаж\u00bb</b>:\n\n"
         "\U0001f5fa ДПШМ-маршрут — как проходить точки и выжимать максимум\n"
         "\U0001f4ac Скрипты возражений — реальные фразы, которые работают\n"
         "\U0001f4ca KPI ТП — какие цифры важны и как их улучшить\n\n"
-        "\U0001f511 <i>ТП, которые используют ДПШМ-систему, увеличивают продуктивность на 30% уже в первый месяц.</i>\n\n"
-        "Мырзахыт свяжется с тобой лично и поделится инструментами. \U0001f447"
+        "\U0001f511 <i>ТП, которые используют ДПШМ-систему, увеличивают продуктивность на 30% уже в первый месяц.</i>"
     ),
     "\U0001f465 Супервайзер / РОП": (
         "Добро пожаловать, лидер! \U0001f465\n\n"
-        "Для супервайзеров и РОП-ов у меня приготовлено самое стратегическое из курса <b>«Рекорды продаж»</b>:\n\n"
+        "Для супервайзеров и РОП-ов у меня приготовлено самое стратегическое из курса <b>\u00abРекорды продаж\u00bb</b>:\n\n"
         "\U0001f4cb Система контроля ТП — как видеть результат каждого в реальном времени\n"
         "\U0001f3af Постановка планов — формула, которая мотивирует, а не демотивирует\n"
         "\U0001f525 Топ-ошибки супервайзеров — кейсы из реальной дистрибуции\n\n"
-        "\U0001f511 <i>Супервайзеры, внедрившие еженедельный разбор маршрутов, увеличили выполнение плана команды на 20–35%.</i>\n\n"
-        "Мырзахыт свяжется с тобой лично и предложит стратегию под твою команду. \U0001f447"
+        "\U0001f511 <i>Супервайзеры, внедрившие еженедельный разбор маршрутов, увеличили выполнение плана команды на 20\u201335%.</i>"
     ),
     "\U0001f3e2 Владелец / Дистрибьютор": (
         "Добро пожаловать, партнёр! \U0001f3e2\n\n"
-        "Для владельцев и дистрибьюторов у меня приготовлено самое стратегическое из курса <b>«Рекорды продаж»</b>:\n\n"
+        "Для владельцев и дистрибьюторов у меня приготовлено самое стратегическое из курса <b>\u00abРекорды продаж\u00bb</b>:\n\n"
         "\U0001f50d ДПШМ-система — аудит всей дистрибуции по 4 параметрам\n"
         "\U0001f4b0 Как построить прибыльный дистрибьюторский бизнес: цифры, структура, контроль\n"
         "\U0001f4c9 Топ-ошибки дистрибьюторов — разбор реальных кейсов\n\n"
-        "\U0001f511 <i>Дистрибьюторы, которые внедряют ДПШМ-аудит, увеличивают охват на 25–35% уже в первые 90 дней.</i>\n\n"
-        "Мырзахыт свяжется с тобой лично и предложит стратегию под твой бизнес. \U0001f447"
+        "\U0001f511 <i>Дистрибьюторы, которые внедряют ДПШМ-аудит, увеличивают охват на 25\u201335% уже в первые 90 дней.</i>"
     ),
 }
 
@@ -43,11 +40,6 @@ ROLE_LIST = list(ROLES.keys())
 def role_keyboard():
     buttons = [[KeyboardButton(r)] for r in ROLE_LIST]
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True, one_time_keyboard=True)
-
-def details_keyboard():
-    return InlineKeyboardMarkup([[
-        InlineKeyboardButton("\U0001f4f2 Узнать подробнее", url="https://t.me/Mirzahit_Abdylakhatov")
-    ]])
 
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -64,8 +56,11 @@ async def handle_role(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     await update.message.reply_text(ROLES[text], parse_mode="HTML", reply_markup=ReplyKeyboardRemove())
     await update.message.reply_text(
-        "Нажми кнопку ниже, чтобы узнать подробнее о курсе \U0001f447",
-        reply_markup=details_keyboard()
+        "\U0001f680 Скоро здесь появится доступ к полному курсу и материалам!\n\n"
+        "А пока — подпишись на канал @fmcgsng, чтобы не пропустить обновления \U0001f447",
+        reply_markup=InlineKeyboardMarkup([[
+            InlineKeyboardButton("\U0001f4e2 Канал FMCG SNG", url="https://t.me/fmcgsng")
+        ]])
     )
 
 async def handle_unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
