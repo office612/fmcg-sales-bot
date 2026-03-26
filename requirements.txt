@@ -1,2 +1,1 @@
-python-telegram-bot==20.8
-# trigger redeploy
+python-telegram-bot==21.10
